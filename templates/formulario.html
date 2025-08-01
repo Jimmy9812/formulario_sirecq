@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario de Requerimiento</title>
+</head>
+<body>
+    <h1>Registrar Requerimiento</h1>
+    <form method="POST">
+        <label>No. Requerimiento:</label><br>
+        <input type="text" name="no_requerimiento" required><br><br>
+
+        <label>Descripción:</label><br>
+        <input type="text" name="descripcion" required><br><br>
+
+        <label>Prioridad:</label><br>
+        <select name="prioridad">
+            {% for p in prioridades %}
+            <option value="{{ p[0] }}">{{ p[1] }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>Clasificación Catastral:</label><br>
+        <select name="clasif">
+            {% for c in clasificaciones %}
+            <option value="{{ c[0] }}">{{ c[1] }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>Trámite Priorizado Relacionado:</label><br>
+        <input type="text" name="tramitePR"><br><br>
+
+        <label>Seguimiento Institucional:</label><br>
+        <input type="text" name="seguimientoInst"><br><br>
+
+        <label>Dependencia:</label><br>
+        <select name="dependencia">
+            {% for d in dependencias %}
+            <option value="{{ d[0] }}">{{ d[1] }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>Sistema Afectar:</label><br>
+        <input type="text" name="sistema_afectar"><br><br>
+
+        <label>Trámite Catastro:</label><br>
+        <input type="text" name="tramiteCat"><br><br>
+
+        <label>Responsable (Analista Catastral):</label><br>
+        <select name="responsable">
+            {% for r in responsables %}
+            <option value="{{ r[0] }}">Usuario ID {{ r[1] }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>Técnico DMSIST para desarrollo:</label><br>
+        <select name="tecnico">
+            {% for t in tecnicos %}
+            <option value="{{ t[0] }}">Usuario ID {{ t[1] }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>Fecha de envío DMC:</label><br>
+        <input type="date" name="fecha_env_dmc"><br><br>
+
+        <label>Oficio de envío:</label><br>
+        <input type="text" name="oficio_envio"><br><br>
+
+        <label>Fecha de envío de requerimiento:</label><br>
+        <input type="date" name="fecha_envio_req"><br><br>
+
+        <label>Oficio despacho propuesta técnica:</label><br>
+        <input type="text" name="oficio_despacho"><br><br>
+
+        <label>Fecha despacho propuesta técnica:</label><br>
+        <input type="date" name="fecha_desp_pt"><br><br>
+
+        <label>Estado del requerimiento:</label><br>
+        <select name="estado">
+            {% for e in estados %}
+            <option value="{{ e[0] }}">{{ e[1] }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>Observaciones Generales:</label><br>
+        <textarea name="observacionesGen"></textarea><br><br>
+
+        <label>Observación TICS:</label><br>
+        <textarea name="obsv_tecnica"></textarea><br><br>
+
+        <input type="submit" value="Guardar">
+    </form>
+</body>
+</html>
