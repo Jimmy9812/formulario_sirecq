@@ -5,11 +5,12 @@ app = Flask(__name__)
 
 # Configuración de conexión a PostgreSQL
 conn = psycopg2.connect(
-    dbname="catastro_p1",
-    user="postgres",
-    password="postgres",
-    host="localhost",
+    dbname="catastrodb_p2",
+    user="karol",
+    password="Karol2510@Masoquista",
+    host="ep-icy-waterfall-ad8hxp3v-pooler.c-2.us-east-1.aws.neon.tech",
     port="5432"
+
 )
 cursor = conn.cursor()
 
@@ -123,7 +124,7 @@ def sirecq_interno():
         FROM rol_usuario ru
         JOIN usuario u ON ru.id_usuario = u.id_usuario
         JOIN rol r ON ru.id_rol = r.id_rol
-        WHERE r.nombre_rol ILIKE '%responsable%'
+        WHERE r.nombre_rol ILIKE '%ejecutor%'
     """)
     responsables = cursor.fetchall()
 

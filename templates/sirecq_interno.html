@@ -22,7 +22,7 @@
             <input type="text" name="documento"><br><br>
 
             <label>Usuario que registra:</label><br>
-            
+
             <select name="usuario_registra" required>
                 {% for u in usuarios %}
                 <option value="{{ u[0] }}">{{ u[1] }}</option>
@@ -93,7 +93,7 @@
                 {% endfor %}
             </select><br><br>
 
-            <label>Responsable (Analista Catastral):</label><br>
+            <label>Ejecutor:</label><br>
             <select name="id_rol_usuario">
                 {% for r in responsables %}
                 <option value="{{ r[0] }}">{{ r[1] }}</option>
