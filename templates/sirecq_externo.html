@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Document</title>
+</head>
+<body>
+    
+<form method="POST">
+    <h2>Registrar SIRECQ Externo</h2>
+
+    <label>No. Requerimiento:</label>
+    <input type="text" name="no_requerimiento" required><br>
+
+    <label>Descripción:</label>
+    <input type="text" name="descripcion" required><br>
+
+    <label>Trámite Priorizado Relacionado:</label>
+    <input type="text" name="tramitePR"><br>
+
+    <label>Seguimiento Institucional:</label>
+    <input type="text" name="seguimientoInst"><br>
+
+    <label>Dependencia:</label>
+    <select name="id_dependencia">
+        {% for d in dependencias %}
+        <option value="{{ d[0] }}">{{ d[1] }}</option>
+        {% endfor %}
+    </select><br>
+
+    <label>Sistema a Afectar:</label>
+    <select name="id_sistema">
+        {% for s in sistemas %}
+        <option value="{{ s[0] }}">{{ s[1] }}</option>
+        {% endfor %}
+    </select><br>
+
+    <label>Categoría:</label>
+    <select name="id_categoria">
+        {% for c in categorias %}
+        <option value="{{ c[0] }}">{{ c[1] }}</option>
+        {% endfor %} 
+    </select><br>
+
+    <label>Trámite Catastral:</label>
+    <input type="text" name="tramiteCat"><br>
+
+    <label>Fase:</label>
+    <input type="text" name="fase" value="Requisito" or value="Test/prueba"><br>
+
+    <label>version</label>
+    <input type="text" name="num_version">
+
+
+    <label>Responsable (Analista Catastral):</label>
+    <select name="id_rol_usuario">
+        {% for r in responsables %}
+        <option value="{{ r[0] }}">{{ r[1] }}</option>
+        {% endfor %}
+    </select><br>
+
+    <label>Fecha de Envío por DMC:</label>
+    <input type="date" name="fecha_registro"><br>
+
+    <label>Oficio de Envío a DMI:</label>
+    <input type="text" name="oficioEnvioDmi"><br>
+
+    <label>Fecha de Envío Requerimiento:</label>
+    <input type="date" name="fechaEnvioReq"><br>
+
+    <label>Oficio Despacho Propuesta Técnica:</label>
+    <input type="text" name="ofi_desp_pt"><br>
+
+    <label>Fecha Despacho Propuesta Técnica:</label>
+    <input type="date" name="fech_desp_pt"><br>
+
+    <label>Estado del Requerimiento:</label>
+    <select name="id_estado">
+        {% for e in estados %}
+        <option value="{{ e[0] }}">{{ e[1] }}</option>
+        {% endfor %}
+    </select><br>
+
+    <label>Observaciones Generales:</label>
+    <textarea name="observacionesGen"></textarea><br>
+
+    <input type="submit" value="Guardar">
+</form>
+
+
+</body>
+</html>

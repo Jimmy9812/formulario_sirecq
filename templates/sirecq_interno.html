@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrar Requerimiento Interno</title>
+</head>
+<body>
+    <h1>Formulario SIRECQ INTERNO</h1>
+    <form method="POST">
+
+        <!-- 📌 Datos principales del requerimiento -->
+        <fieldset>
+            <legend>Datos del Requerimiento</legend>
+
+            <label>No. Requerimiento:</label><br>
+            <input type="text" name="no_requerimiento" required><br><br>
+
+            <label>Descripción:</label><br>
+            <input type="text" name="descripcion" required><br><br>
+
+            <label>Fecha de Registro:</label><br>
+            <input type="date" name="fecha_registro"><br><br>
+
+            <label>Fase / Categoría:</label><br>
+            <select name="id_categoria">
+                {% for c in categorias %}
+                <option value="{{ c[0] }}">{{ c[1] }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label>Sistema:</label><br>
+            <select name="id_sistema">
+                {% for s in sistemas %}
+                <option value="{{ s[0] }}">{{ s[1] }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label>Estado del Requerimiento:</label><br>
+            <select name="id_estado">
+                {% for e in estados %}
+                <option value="{{ e[0] }}">{{ e[1] }}</option>
+                {% endfor %}
+            </select><br><br>
+        </fieldset>
+
+        <br>
+
+        <!-- 📌 Datos de Versionamiento -->
+        <fieldset>
+            <legend>Datos de Versionamiento</legend>
+
+            <label>Número de Versión:</label><br>
+            <input type="number" name="num_version" min="1" value="1"><br><br>
+
+            <label>Oficio Envío a DMI:</label><br>
+            <input type="text" name="oficioEnvioDmi"><br><br>
+
+            <label>Fecha Envío Requerimiento:</label><br>
+            <input type="date" name="fechaEnvioReq"><br><br>
+
+            <label>Oficio Despacho Propuesta Técnica:</label><br>
+            <input type="text" name="ofi_desp_pt"><br><br>
+
+            <label>Fecha Despacho Propuesta Técnica:</label><br>
+            <input type="date" name="fech_desp_pt"><br><br>
+        </fieldset>
+
+        <br>
+
+        <!-- 📌 Información de seguimiento -->
+        <fieldset>
+            <legend>Seguimiento y Responsable</legend>
+
+            <label>Dependencia:</label><br>
+            <select name="id_dependencia">
+                {% for d in dependencias %}
+                <option value="{{ d[0] }}">{{ d[1] }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label>Responsable (Analista Catastral):</label><br>
+            <select name="id_rol_usuario">
+                {% for r in responsables %}
+                <option value="{{ r[0] }}">{{ r[1] }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label>Técnico DMSIST para desarrollo:</label><br>
+            <select name="tecnico">
+                {% for t in tecnicos %}
+                <option value="{{ t[0] }}">{{ t[1] }}</option>
+                {% endfor %}
+            </select><br><br>
+        </fieldset>
+
+        <br>
+
+        <!-- 📌 Trámites y observaciones -->
+        <fieldset>
+            <legend>Trámites y Observaciones</legend>
+
+            <label>Trámite Priorizado Relacionado:</label><br>
+            <input type="text" name="tramitePR"><br><br>
+
+            <label>Seguimiento Institucional:</label><br>
+            <input type="text" name="seguimientoInst"><br><br>
+
+            <label>Trámite Catastro:</label><br>
+            <input type="text" name="tramiteCat"><br><br>
+
+            <label>Observaciones Generales:</label><br>
+            <textarea name="observacionesGen"></textarea><br><br>
+        </fieldset>
+
+        <br>
+
+        <!-- 📌 Datos técnicos internos -->
+        <fieldset>
+            <legend>Datos Técnicos (Interno)</legend>
+
+            <label>Fecha de Envío de la DMC:</label><br>
+            <input type="date" name="fecha_env_dmc"><br><br>
+
+            <label>Clasificación Catastral:</label><br>
+            <select name="clasif">
+                <option value="">(Vacío)</option>
+                {% for c in clasificaciones %}
+                <option value="{{ c[0] }}">{{ c[1] }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label>Prioridad:</label><br>
+            <select name="prioridad">
+                <option value="">(Vacío)</option>
+                {% for p in prioridades %}
+                <option value="{{ p[0] }}">{{ p[1] }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label>Observación TICS:</label><br>
+            <textarea name="obsv_tecnica"></textarea><br><br>
+        </fieldset>
+
+        <br>
+
+        <input type="submit" value="Guardar">
+    </form>
+</body>
+</html>
