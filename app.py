@@ -88,15 +88,13 @@ def sirecq_interno():
                 id_sirecq_externo, prioridad, id_clasif_catastral, fecha_env_dmc, obsv_tecnica
             ) VALUES (%s, %s, %s, %s, %s) RETURNING id_sirecq_interno
         """, (id_sirecq_externo, prioridad, clasif_id, fecha_env_dmc, obsv_tecnica))
-
+        id_sirecq_interno = cursor.fetchone()[0]  # <--- AQUÍ capturas el ID
 
         # Insertar en usuario_sirecq (asignar técnico)
         cursor.execute("""
             INSERT INTO usuario_sirecq (id_rol_usuario, id_sirecq_interno)
             VALUES (%s, %s)
         """, (tecnico_id, id_sirecq_interno))
-        
-
 
         conn.commit()
         return redirect('/sirecq_interno')
