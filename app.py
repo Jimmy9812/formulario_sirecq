@@ -5,98 +5,244 @@ app = Flask(__name__)
 
 # Configuración de conexión a PostgreSQL
 conn = psycopg2.connect(
-    dbname="CatastroDB_P2",
+    dbname="catastro_p1",
     user="postgres",
-    password="12345",
+    password="postgres",
     host="localhost",
     port="5432"
 )
 cursor = conn.cursor()
 
-@app.route('/', methods=['GET', 'POST'])
-def formulario():
+@app.route('/sirecq_interno', methods=['GET', 'POST'])
+def sirecq_interno():
     if request.method == 'POST':
-        no_requerimiento = request.form['no_requerimiento']
-        descripcion = request.form['descripcion']
-        prioridad_id = request.form['prioridad']
-        clasif_id = request.form['clasif']
-        tramitePR = request.form['tramitePR']
-        seguimientoInst = request.form['seguimientoInst']
-        dependencia_id = request.form['dependencia']
-        sistema_afectar = request.form['sistema_afectar']
-        tramiteCat = request.form['tramiteCat']
-        responsable_id = request.form['responsable']
-        tecnico_id = request.form['tecnico']
-        fecha_env_dmc = request.form['fecha_env_dmc']
-        oficio_envio = request.form['oficio_envio']
-        fecha_envio_req = request.form['fecha_envio_req']
-        oficio_despacho = request.form['oficio_despacho']
-        fecha_desp_pt = request.form['fecha_desp_pt']
-        estado_id = request.form['estado']
-        observacionesGen = request.form['observacionesGen']
-        obsv_tecnica = request.form['obsv_tecnica']
+        no_requerimiento = request.form.get('no_requerimiento')
+        descripcion = request.form.get('descripcion')
+        tramitePR = request.form.get('tramitePR') or None
+        seguimientoInst = request.form.get('seguimientoInst') or None
+        id_dependencia = request.form.get('id_dependencia')
+        id_sistema = request.form.get('id_sistema')
+        id_categoria = request.form['id_categoria'] or None
+        tramiteCat = request.form.get('tramiteCat') or None
+        id_rol_usuario = request.form.get('id_rol_usuario') or None  # Responsable
+        fecha_registro = request.form.get('fecha_registro') or None
+        oficioEnvioDmi = request.form.get('oficioEnvioDmi') or None
+        fechaEnvioReq = request.form.get('fechaEnvioReq') or None
+        ofi_desp_pt = request.form.get('ofi_desp_pt') or None
+        fech_desp_pt = request.form.get('fech_desp_pt') or None
+        id_estado = request.form.get('id_estado')
+        observacionesGen = request.form.get('observacionesGen') or None
+        obsv_tecnica = request.form.get('obsv_tecnica') or None
+        tecnico_id = request.form.get('tecnico') or None
+        fase= request.form.get('fase') or 'Requisito'  
+        num_version = request.form.get('num_version') 
+        clasif_id = request.form.get('clasif') or None
+        prioridad_id = request.form.get('prioridad') or None
+        fecha_env_dmc = request.form.get('fecha_env_dmc') or None
 
         # Insertar en versionamiento
         cursor.execute("""
-            INSERT INTO versionamiento (oficioEnvioDmi, fechaEnvioReq, ofi_desp_pt, fecha_desp_pt)
-            VALUES (%s, %s, %s, %s) RETURNING id_version
-        """, (oficio_envio, fecha_envio_req, oficio_despacho, fecha_desp_pt))
-        version_id = cursor.fetchone()[0]
+            INSERT INTO versionamiento (oficioEnvioDmi, fechaEnvioReq, ofi_desp_pt, fech_desp_pt, num_version)
+            VALUES (%s, %s, %s, %s, %s) RETURNING id_version
+        """, (oficioEnvioDmi, fechaEnvioReq, ofi_desp_pt, fech_desp_pt, num_version))
+        id_versionamiento = cursor.fetchone()[0]
 
-        # Insertar en requerimiento
-        cursor.execute("""
-            INSERT INTO requerimiento (id_estado_requerimiento, id_versionamiento, no_requerimiento,
-                fecha_registro, documento, tema, descripcion, sistema_afectar, categoria)
-            VALUES (%s, %s, %s, CURRENT_DATE, 'doc.pdf', 'tema', %s, %s, 'Tecnología') RETURNING id_requerimiento
-        """, (estado_id, version_id, no_requerimiento, descripcion, sistema_afectar))
-        req_id = cursor.fetchone()[0]
+        
 
-        # Insertar en test_produccion
+        # Insertar en requerimiento (sin id_versionamiento)
         cursor.execute("""
-            INSERT INTO test_produccion (id_requerimiento, id_rol_usuario, etapa_implementacion, respuesta_tics)
-            VALUES (%s, %s, 'N/A', 'N/A') RETURNING id_test_produccion
-        """, (req_id, tecnico_id))
+            INSERT INTO requerimiento (
+                id_estado_requerimiento, id_rol_usuario,
+                id_sistema, id_categoria, no_requerimiento,
+                fecha_registro, descripcion, fase
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING id_requerimiento
+        """, (
+            id_estado, id_rol_usuario, id_sistema, id_categoria,
+            no_requerimiento, fecha_registro, descripcion, fase 
+        ))
+        id_requerimiento = cursor.fetchone()[0]
+
+        # Insertar relación requerimiento-versionamiento
+        cursor.execute("""
+            INSERT INTO requerimiento_version (id_requerimiento, id_version)
+            VALUES (%s, %s)
+        """, (id_requerimiento, id_versionamiento))
 
         # Insertar en sirecq_externo
         cursor.execute("""
-            INSERT INTO sirecq_externo (id_requerimiento, id_dependencia, tramitePR, seguimientoInst, tramiteCat, observacionesGen)
-            VALUES (%s, %s, %s, %s, %s, %s) RETURNING id_sirecq_externo
-        """, (req_id, dependencia_id, tramitePR, seguimientoInst, tramiteCat, observacionesGen))
-        sirecq_ext_id = cursor.fetchone()[0]
+            INSERT INTO sirecq_externo (
+                id_requerimiento, id_dependencia, tramitePR, seguimientoInst, tramiteCat, observacionesGen
+            ) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id_sirecq_externo
+        """, (id_requerimiento, id_dependencia, tramitePR, seguimientoInst, tramiteCat, observacionesGen))
+        id_sirecq_externo = cursor.fetchone()[0]
 
         # Insertar en sirecq_interno
         cursor.execute("""
-            INSERT INTO sirecq_interno (id_sirecq_externo, id_prioridad, id_clasif_catastral, fecha_env_dmc, obsv_tecnica)
-            VALUES (%s, %s, %s, %s, %s) RETURNING id_sirecq_interno
-        """, (sirecq_ext_id, prioridad_id, clasif_id, fecha_env_dmc, obsv_tecnica))
-        sirecq_int_id = cursor.fetchone()[0]
+            INSERT INTO sirecq_interno (
+                id_sirecq_externo, id_prioridad, id_clasif_catastral, fecha_env_dmc, obsv_tecnica
+            ) VALUES (%s, %s, %s, %s, %s) RETURNING id_sirecq_interno
+        """, (id_sirecq_externo, prioridad_id, clasif_id, fecha_env_dmc, obsv_tecnica))
+        id_sirecq_interno = cursor.fetchone()[0]
 
-        # Insertar en usuario_sirecq
+        # Insertar en usuario_sirecq (asignar técnico)
         cursor.execute("""
             INSERT INTO usuario_sirecq (id_rol_usuario, id_sirecq_interno)
             VALUES (%s, %s)
-        """, (responsable_id, sirecq_int_id))
+        """, (tecnico_id, id_sirecq_interno))
+        
+
 
         conn.commit()
-        return redirect('/')
+        return redirect('/sirecq_interno')
 
-    # Obtener listas para selects (nombre e id)
-    cursor.execute("SELECT ru.id_rol_usuario, u.nombre_usuario || ' ' || u.apellidos_usuario AS nombre_responsable FROM rol_usuario ru INNER JOIN rol r ON ru.id_rol = r.id_rol INNER JOIN usuario u ON ru.id_usuario = u.id_usuario WHERE r.nombre_rol ILIKE '%responsable%';")
-    responsables = cursor.fetchall()
-    cursor.execute("SELECT ru.id_rol_usuario, u.nombre_usuario || ' ' || u.apellidos_usuario AS nombre_tecnico FROM rol_usuario ru INNER JOIN rol r ON ru.id_rol = r.id_rol INNER JOIN usuario u ON ru.id_usuario = u.id_usuario WHERE r.nombre_rol ILIKE '%técnico%'")
-    tecnicos = cursor.fetchall()
+    # GET - cargar selects
     cursor.execute("SELECT id_dependencia, nombre_dependencia FROM dependencia")
     dependencias = cursor.fetchall()
-    cursor.execute("SELECT id_prioridad, nombre_prioridad FROM prioridad")
-    prioridades = cursor.fetchall()
-    cursor.execute("SELECT id_clasif_catastral, nombre_clasif_catastral FROM clasif_catastral")
-    clasificaciones = cursor.fetchall()
+
+# Cargar categorías
+    cursor.execute("SELECT id_categoria, nom_categoria FROM categoria")
+    categorias = cursor.fetchall()
+
     cursor.execute("SELECT id_estado_requerimiento, nombre_estado_requerimiento FROM estado_requerimiento")
     estados = cursor.fetchall()
 
-    return render_template('formulario.html', responsables=responsables, tecnicos=tecnicos,
-                           dependencias=dependencias, prioridades=prioridades,
-                           clasificaciones=clasificaciones, estados=estados)
+    cursor.execute("""
+        SELECT ru.id_rol_usuario, u.nombre_usuario || ' ' || u.apellidos_usuario
+        FROM rol_usuario ru
+        JOIN usuario u ON ru.id_usuario = u.id_usuario
+        JOIN rol r ON ru.id_rol = r.id_rol
+        WHERE r.nombre_rol ILIKE '%responsable%'
+    """)
+    responsables = cursor.fetchall()
+
+    cursor.execute("""
+        SELECT ru.id_rol_usuario, u.nombre_usuario || ' ' || u.apellidos_usuario
+        FROM rol_usuario ru
+        JOIN usuario u ON ru.id_usuario = u.id_usuario
+        JOIN rol r ON ru.id_rol = r.id_rol
+        WHERE r.nombre_rol ILIKE '%técnico%'
+    """)
+    tecnicos = cursor.fetchall()
+
+    cursor.execute("SELECT id_sistema, nom_sistema FROM sistema")
+    sistemas = cursor.fetchall()
+
+    cursor.execute("SELECT id_clasif_catastral, nombre_clasif_catastral FROM clasif_catastral")
+    clasificaciones = cursor.fetchall()
+
+    cursor.execute("SELECT id_prioridad, nombre_prioridad FROM prioridad")
+    prioridades = cursor.fetchall()
+
+    return render_template(
+    'sirecq_interno.html',
+    dependencias=dependencias,
+    estados=estados,
+    responsables=responsables,
+    tecnicos=tecnicos,
+    sistemas=sistemas,
+    clasificaciones=clasificaciones,
+    prioridades=prioridades,
+    categorias=categorias  
+)
+
+
+
+
+cursor = conn.cursor()
+
+@app.route('/sirecq_externo', methods=['GET', 'POST'])
+def sirecq_externo():
+    if request.method == 'POST':
+        no_requerimiento = request.form['no_requerimiento']
+        descripcion = request.form['descripcion']
+        tramitePR = request.form['tramitePR'] or None
+        seguimientoInst = request.form['seguimientoInst'] or None
+        id_dependencia = request.form['id_dependencia'] or None
+        id_sistema = request.form['id_sistema']
+        id_categoria = request.form['id_categoria'] or None
+        tramiteCat = request.form['tramiteCat'] or None
+        fase= request.form['fase'] 
+        id_rol_usuario = request.form['id_rol_usuario'] or None
+        fecha_registro = request.form['fecha_registro'] or None
+        oficioEnvioDmi = request.form['oficioEnvioDmi'] or None
+        fechaEnvioReq = request.form['fechaEnvioReq'] or None
+        ofi_desp_pt = request.form['ofi_desp_pt'] or None
+        fech_desp_pt = request.form['fech_desp_pt'] or None
+        num_version = request.form.get('num_version') or None
+        id_estado = request.form['id_estado']
+        observacionesGen = request.form['observacionesGen'] or None
+
+        # Insertar en versionamiento
+        cursor.execute("""
+            INSERT INTO versionamiento (oficioEnvioDmi, fechaEnvioReq, ofi_desp_pt, fech_desp_pt, num_version)
+            VALUES (%s, %s, %s, %s, %s) RETURNING id_version
+        """, (oficioEnvioDmi, fechaEnvioReq, ofi_desp_pt, fech_desp_pt, num_version))
+        id_versionamiento = cursor.fetchone()[0]
+
+    
+        # Insertar en requerimiento (sin id_versionamiento)
+        cursor.execute("""
+            INSERT INTO requerimiento (
+                id_estado_requerimiento, id_rol_usuario,
+                id_sistema, id_categoria, no_requerimiento,
+                fecha_registro, descripcion, fase
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING id_requerimiento
+        """, (
+            id_estado, id_rol_usuario, id_sistema, id_categoria,
+            no_requerimiento, fecha_registro, descripcion, fase 
+        ))
+        id_requerimiento = cursor.fetchone()[0]
+
+        # Insertar relación requerimiento-versionamiento
+        cursor.execute("""
+            INSERT INTO requerimiento_version (id_requerimiento, id_version)
+            VALUES (%s, %s)
+        """, (id_requerimiento, id_versionamiento))
+
+
+        # Insertar en sirecq_externo
+        cursor.execute("""
+            INSERT INTO sirecq_externo (
+                id_requerimiento, id_dependencia, tramitePR, seguimientoInst, tramiteCat, observacionesGen
+            ) VALUES (%s, %s, %s, %s, %s, %s)
+        """, (id_requerimiento, id_dependencia, tramitePR, seguimientoInst, tramiteCat, observacionesGen))
+
+        conn.commit()
+        return redirect('/sirecq_externo')
+
+    # GET - cargar selects
+    cursor.execute("SELECT id_dependencia, nombre_dependencia FROM dependencia")
+    dependencias = cursor.fetchall()
+
+    cursor.execute("SELECT id_estado_requerimiento, nombre_estado_requerimiento FROM estado_requerimiento")
+    estados = cursor.fetchall()
+
+    
+    cursor.execute("""
+        SELECT ru.id_rol_usuario, u.nombre_usuario || ' ' || u.apellidos_usuario
+        FROM rol_usuario ru
+        JOIN usuario u ON ru.id_usuario = u.id_usuario
+        JOIN rol r ON ru.id_rol = r.id_rol
+        WHERE r.nombre_rol ILIKE '%responsable%'
+    """)
+    responsables = cursor.fetchall()
+
+    cursor.execute("SELECT id_sistema, nom_sistema FROM sistema")
+    sistemas = cursor.fetchall()
+
+    cursor.execute("SELECT id_categoria, nom_categoria FROM categoria")
+    categorias = cursor.fetchall()
+
+    return render_template('sirecq_externo.html',
+                           dependencias=dependencias,
+                           estados=estados,
+                           responsables=responsables,
+                           sistemas=sistemas
+                           , categorias=categorias
+                           )
 
 if __name__ == '__main__':
     app.run(debug=True)
+
