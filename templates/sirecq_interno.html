@@ -130,12 +130,7 @@
             </select><br><br>
 
             <label>Prioridad:</label><br>
-            <select name="prioridad">
-                <option value="">(Vacío)</option>
-                {% for p in prioridades %}
-                <option value="{{ p[0] }}">{{ p[1] }}</option>
-                {% endfor %}
-            </select><br><br>
+            <input type="number" name="prioridad" min="1" required><br><br>
 
             <label>Observación TICS:</label><br>
             <textarea name="obsv_tecnica"></textarea><br><br>

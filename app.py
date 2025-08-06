@@ -37,7 +37,7 @@ def sirecq_interno():
         fase= request.form.get('fase') or 'Requisito'  
         num_version = request.form.get('num_version') 
         clasif_id = request.form.get('clasif') or None
-        prioridad_id = request.form.get('prioridad') or None
+        prioridad = request.form.get('prioridad')
         fecha_env_dmc = request.form.get('fecha_env_dmc') or None
 
         # Insertar en versionamiento
@@ -80,10 +80,10 @@ def sirecq_interno():
         # Insertar en sirecq_interno
         cursor.execute("""
             INSERT INTO sirecq_interno (
-                id_sirecq_externo, id_prioridad, id_clasif_catastral, fecha_env_dmc, obsv_tecnica
+                id_sirecq_externo, prioridad, id_clasif_catastral, fecha_env_dmc, obsv_tecnica
             ) VALUES (%s, %s, %s, %s, %s) RETURNING id_sirecq_interno
-        """, (id_sirecq_externo, prioridad_id, clasif_id, fecha_env_dmc, obsv_tecnica))
-        id_sirecq_interno = cursor.fetchone()[0]
+        """, (id_sirecq_externo, prioridad, clasif_id, fecha_env_dmc, obsv_tecnica))
+
 
         # Insertar en usuario_sirecq (asignar técnico)
         cursor.execute("""
@@ -131,8 +131,7 @@ def sirecq_interno():
     cursor.execute("SELECT id_clasif_catastral, nombre_clasif_catastral FROM clasif_catastral")
     clasificaciones = cursor.fetchall()
 
-    cursor.execute("SELECT id_prioridad, nombre_prioridad FROM prioridad")
-    prioridades = cursor.fetchall()
+   
 
     return render_template(
     'sirecq_interno.html',
@@ -142,7 +141,6 @@ def sirecq_interno():
     tecnicos=tecnicos,
     sistemas=sistemas,
     clasificaciones=clasificaciones,
-    prioridades=prioridades,
     categorias=categorias  
 )
 
