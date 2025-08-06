@@ -15,11 +15,26 @@
             <label>No. Requerimiento:</label><br>
             <input type="text" name="no_requerimiento" required><br><br>
 
-            <label>Descripción:</label><br>
-            <input type="text" name="descripcion" required><br><br>
+            <label>Tema:</label><br>
+            <input type="text" name="tema"><br><br>
+
+            <label>Documento:</label><br>
+            <input type="text" name="documento"><br><br>
+
+            <label>Usuario que registra:</label><br>
+            
+            <select name="usuario_registra" required>
+                {% for u in usuarios %}
+                <option value="{{ u[0] }}">{{ u[1] }}</option>
+                {% endfor %}
+            </select><br><br>
+
 
             <label>Fecha de Registro:</label><br>
             <input type="date" name="fecha_registro"><br><br>
+
+            <label>Descripción:</label><br>
+            <input type="text" name="descripcion" required><br><br>
 
             <label>Fase / Categoría:</label><br>
             <select name="id_categoria">

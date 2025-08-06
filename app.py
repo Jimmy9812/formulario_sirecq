@@ -39,6 +39,11 @@ def sirecq_interno():
         clasif_id = request.form.get('clasif') or None
         prioridad = request.form.get('prioridad')
         fecha_env_dmc = request.form.get('fecha_env_dmc') or None
+        tema = request.form.get('tema') or None
+        documento = request.form.get('documento') or None
+        usuario_registra = request.form.get('usuario_registra') or None      
+
+
 
         # Insertar en versionamiento
         cursor.execute("""
@@ -54,12 +59,12 @@ def sirecq_interno():
             INSERT INTO requerimiento (
                 id_estado_requerimiento, id_rol_usuario,
                 id_sistema, id_categoria, no_requerimiento,
-                fecha_registro, descripcion, fase
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                fecha_registro, documento, tema, descripcion, fase
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id_requerimiento
         """, (
             id_estado, id_rol_usuario, id_sistema, id_categoria,
-            no_requerimiento, fecha_registro, descripcion, fase 
+            no_requerimiento, fecha_registro, documento, tema, descripcion, fase
         ))
         id_requerimiento = cursor.fetchone()[0]
 
@@ -106,6 +111,14 @@ def sirecq_interno():
 
     cursor.execute("SELECT id_estado_requerimiento, nombre_estado_requerimiento FROM estado_requerimiento")
     estados = cursor.fetchall()
+    
+    cursor.execute("""
+        SELECT ru.id_rol_usuario, u.nombre_usuario || ' ' || u.apellidos_usuario
+        FROM rol_usuario ru
+        JOIN usuario u ON ru.id_usuario = u.id_usuario
+    """)
+    usuarios = cursor.fetchall()
+
 
     cursor.execute("""
         SELECT ru.id_rol_usuario, u.nombre_usuario || ' ' || u.apellidos_usuario
@@ -139,6 +152,7 @@ def sirecq_interno():
     estados=estados,
     responsables=responsables,
     tecnicos=tecnicos,
+    usuarios=usuarios,
     sistemas=sistemas,
     clasificaciones=clasificaciones,
     categorias=categorias  
