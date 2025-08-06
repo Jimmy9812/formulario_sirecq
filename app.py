@@ -5,11 +5,11 @@ app = Flask(__name__)
 
 # Configuración de conexión a PostgreSQL
 conn = psycopg2.connect(
-    dbname="catastrodb_p2",
-    user="karol",
-    password="Karol2510@Masoquista",
-    host="ep-icy-waterfall-ad8hxp3v-pooler.c-2.us-east-1.aws.neon.tech",
-    port="5432"
+    dbname=os.getenv("DB_NAME"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASSWORD"),
+    host=os.getenv("DB_HOST"),
+    port=os.getenv("DB_PORT")
 
 )
 cursor = conn.cursor()
