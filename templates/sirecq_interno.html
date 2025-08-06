@@ -43,19 +43,23 @@
                 {% endfor %}
             </select><br><br>
 
-            <label>Sistema:</label><br>
-            <select name="id_sistema">
-                {% for s in sistemas %}
-                <option value="{{ s[0] }}">{{ s[1] }}</option>
+            <label for="id_sistema">Sistema:</label><br>
+            <select name="id_sistema" id="id_sistema">
+                <option value="">-- Seleccione un sistema --</option>
+                {% for sistema in sistemas %}
+                    <option value="{{ sistema[0] }}">{{ sistema[1] }}</option>
                 {% endfor %}
             </select><br><br>
 
-            <label>Estado del Requerimiento:</label><br>
-            <select name="id_estado">
-                {% for e in estados %}
-                <option value="{{ e[0] }}">{{ e[1] }}</option>
+
+            <label for="id_estado">Estado del requerimiento:</label><br>
+            <select name="id_estado" id="id_estado">
+                <option value="">-- Seleccione una opción --</option>
+                {% for estado in estados %}
+                    <option value="{{ estado[0] }}">{{ estado[1] }}</option>
                 {% endfor %}
             </select><br><br>
+
         </fieldset>
 
         <br>
@@ -144,8 +148,9 @@
                 {% endfor %}
             </select><br><br>
 
-            <label>Prioridad:</label><br>
-            <input type="number" name="prioridad" min="1" required><br><br>
+            <label for="prioridad">Prioridad:</label><br>
+            <input type="number" name="prioridad" id="prioridad" min="1" placeholder="Opcional"><br><br>
+
 
             <label>Observación TICS:</label><br>
             <textarea name="obsv_tecnica"></textarea><br><br>

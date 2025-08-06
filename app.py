@@ -21,7 +21,7 @@ def sirecq_interno():
         descripcion = request.form.get('descripcion')
         tramitePR = request.form.get('tramitePR') or None
         seguimientoInst = request.form.get('seguimientoInst') or None
-        id_dependencia = request.form.get('id_dependencia')
+        id_dependencia = request.form.get('id_dependencia') or None
         id_sistema = request.form.get('id_sistema')
         id_categoria = request.form['id_categoria'] or None
         tramiteCat = request.form.get('tramiteCat') or None
@@ -38,7 +38,7 @@ def sirecq_interno():
         fase= request.form.get('fase') or 'Requisito'  
         num_version = request.form.get('num_version') 
         clasif_id = request.form.get('clasif') or None
-        prioridad = request.form.get('prioridad')
+        prioridad = request.form.get('prioridad') or None
         fecha_env_dmc = request.form.get('fecha_env_dmc') or None
         tema = request.form.get('tema') or None
         documento = request.form.get('documento') or None
@@ -166,11 +166,11 @@ cursor = conn.cursor()
 def sirecq_externo():
     if request.method == 'POST':
         no_requerimiento = request.form['no_requerimiento']
-        descripcion = request.form['descripcion']
+        descripcion = request.form['descripcion'] or None
         tramitePR = request.form['tramitePR'] or None
         seguimientoInst = request.form['seguimientoInst'] or None
         id_dependencia = request.form['id_dependencia'] or None
-        id_sistema = request.form['id_sistema']
+        id_sistema = request.form['id_sistema'] or None
         id_categoria = request.form['id_categoria'] or None
         tramiteCat = request.form['tramiteCat'] or None
         fase= request.form['fase'] 
@@ -181,7 +181,7 @@ def sirecq_externo():
         ofi_desp_pt = request.form['ofi_desp_pt'] or None
         fech_desp_pt = request.form['fech_desp_pt'] or None
         num_version = request.form.get('num_version') or None
-        id_estado = request.form['id_estado']
+        id_estado = request.form['id_estado'] or None
         observacionesGen = request.form['observacionesGen'] or None
 
         # Insertar en versionamiento
@@ -236,7 +236,7 @@ def sirecq_externo():
         FROM rol_usuario ru
         JOIN usuario u ON ru.id_usuario = u.id_usuario
         JOIN rol r ON ru.id_rol = r.id_rol
-        WHERE r.nombre_rol ILIKE '%responsable%'
+        WHERE r.nombre_rol ILIKE '%ejecutor%'
     """)
     responsables = cursor.fetchall()
 
