@@ -280,6 +280,7 @@ def test_produccion():
         fechaEnvioReq = request.form.get('fechaEnvioReq') or None
         ofi_desp_pt = request.form.get('ofi_desp_pt') or None
         fech_desp_pt = request.form.get('fech_desp_pt') or None
+        num_version = request.form.get('num_version') 
 
         # Test Producción
         etapa_implementacion = request.form.get('etapa_implementacion')
@@ -291,9 +292,9 @@ def test_produccion():
 
         # Insertar en versionamiento
         cursor.execute("""
-            INSERT INTO versionamiento (oficioEnvioDmi, fechaEnvioReq, ofi_desp_pt, fech_desp_pt)
+            INSERT INTO versionamiento (oficioEnvioDmi, fechaEnvioReq, ofi_desp_pt, fech_desp_pt, num_version)
             VALUES (%s, %s, %s, %s) RETURNING id_version
-        """, (oficioEnvioDmi, fechaEnvioReq, ofi_desp_pt, fech_desp_pt))
+        """, (oficioEnvioDmi, fechaEnvioReq, ofi_desp_pt, fech_desp_pt, num_version))
         id_version = cursor.fetchone()[0]
 
         # Insertar en requerimiento
