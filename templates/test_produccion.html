@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario Test Producción</title>
+</head>
+<body>
+    <h2>Registro Test/Producción</h2>
+    <form method="POST" action="/test_produccion">
+        
+        <label for="no_requerimiento">No. Requerimiento (obligatorio):</label><br>
+        <input type="text" name="no_requerimiento" required><br><br>
+
+        <label for="descripcion">Descripción (obligatorio):</label><br>
+        <textarea name="descripcion" rows="4" required></textarea><br><br>
+
+        <label for="id_estado">Estado del requerimiento:</label><br>
+        <select name="id_estado">
+            <option value="">-- Seleccione --</option>
+            {% for estado in estados %}
+                <option value="{{ estado[0] }}">{{ estado[1] }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="id_rol_usuario">Ejecutor:</label><br>
+        <select name="id_rol_usuario">
+            <option value="">-- Seleccione --</option>
+            {% for e in ejecutores %}
+                <option value="{{ e[0] }}">{{ e[1] }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="id_categoria">Categoría:</label><br>
+        <select name="id_categoria">
+            <option value="">-- Seleccione --</option>
+            {% for c in categorias %}
+                <option value="{{ c[0] }}">{{ c[1] }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="id_sistema">Sistema:</label><br>
+        <select name="id_sistema">
+            <option value="">-- Seleccione --</option>
+            {% for s in sistemas %}
+                <option value="{{ s[0] }}">{{ s[1] }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="fase">Fase:</label><br>
+        <input type="text" name="fase" placeholder="Ej: Test o Producción"><br><br>
+
+        <h3>Versión</h3>
+
+        <label for="oficioEnvioDmi">Oficio de envío a DMI:</label><br>
+        <input type="text" name="oficioEnvioDmi"><br><br>
+
+        <label for="fechaEnvioReq">Fecha envío requerimiento:</label><br>
+        <input type="date" name="fechaEnvioReq"><br><br>
+
+        <label for="ofi_desp_pt">Propuesta técnica:</label><br>
+        <input type="text" name="ofi_desp_pt"><br><br>
+
+        <label for="fech_desp_pt">Fecha propuesta técnica:</label><br>
+        <input type="date" name="fech_desp_pt"><br><br>
+
+        <h3>Implementación</h3>
+
+        <label for="etapa_implementacion">Etapa de implementación:</label><br>
+        <select name="etapa_implementacion">
+            <option value="Test">Test</option>
+            <option value="Producción">Producción</option>
+        </select><br><br>
+
+        <label for="respuesta_tics">Respuesta TICS:</label><br>
+        <textarea name="respuesta_tics" rows="3"></textarea><br><br>
+
+        <button type="submit">Registrar</button>
+    </form>
+</body>
+</html>

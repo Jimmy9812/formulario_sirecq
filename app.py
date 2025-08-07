@@ -12,6 +12,7 @@ conn = psycopg2.connect(
     port="5432"
 
 )
+
 cursor = conn.cursor()
 
 @app.route('/sirecq_interno', methods=['GET', 'POST'])
@@ -160,8 +161,6 @@ def sirecq_interno():
 
 
 
-cursor = conn.cursor()
-
 @app.route('/sirecq_externo', methods=['GET', 'POST'])
 def sirecq_externo():
     if request.method == 'POST':
@@ -261,6 +260,92 @@ def sirecq_externo():
         sistemas=sistemas,
         categorias=categorias
     )
+
+
+
+@app.route('/test_produccion', methods=['GET', 'POST'])
+def test_produccion():
+    if request.method == 'POST':
+        # Requerimiento
+        no_requerimiento = request.form.get('no_requerimiento')
+        descripcion = request.form.get('descripcion')
+        id_estado = request.form.get('id_estado') or None
+        id_rol_usuario = request.form.get('id_rol_usuario') or None
+        id_categoria = request.form.get('id_categoria') or None
+        id_sistema = request.form.get('id_sistema') or None
+        fase = request.form.get('fase') or None
+
+        # Versionamiento
+        oficioEnvioDmi = request.form.get('oficioEnvioDmi') or None
+        fechaEnvioReq = request.form.get('fechaEnvioReq') or None
+        ofi_desp_pt = request.form.get('ofi_desp_pt') or None
+        fech_desp_pt = request.form.get('fech_desp_pt') or None
+
+        # Test Producción
+        etapa_implementacion = request.form.get('etapa_implementacion')
+        respuesta_tics = request.form.get('respuesta_tics') or None
+
+        # Validación obligatorios
+        if not no_requerimiento or not descripcion:
+            return "El número de requerimiento y la descripción son obligatorios.", 400
+
+        # Insertar en versionamiento
+        cursor.execute("""
+            INSERT INTO versionamiento (oficioEnvioDmi, fechaEnvioReq, ofi_desp_pt, fech_desp_pt)
+            VALUES (%s, %s, %s, %s) RETURNING id_version
+        """, (oficioEnvioDmi, fechaEnvioReq, ofi_desp_pt, fech_desp_pt))
+        id_version = cursor.fetchone()[0]
+
+        # Insertar en requerimiento
+        cursor.execute("""
+            INSERT INTO requerimiento (
+                id_estado_requerimiento, id_rol_usuario, id_categoria, id_sistema,
+                no_requerimiento, descripcion, fase
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id_requerimiento
+        """, (id_estado, id_rol_usuario, id_categoria, id_sistema,
+              no_requerimiento, descripcion, fase))
+        id_requerimiento = cursor.fetchone()[0]
+
+        # Insertar en requerimiento_version
+        cursor.execute("""
+            INSERT INTO requerimiento_version (id_requerimiento, id_version)
+            VALUES (%s, %s)
+        """, (id_requerimiento, id_version))
+
+        # Insertar en test_produccion
+        cursor.execute("""
+            INSERT INTO test_produccion (
+                id_requerimiento, id_rol_usuario, etapa_implementacion, respuesta_tics
+            ) VALUES (%s, %s, %s, %s)
+        """, (id_requerimiento, id_rol_usuario, etapa_implementacion, respuesta_tics))
+
+        conn.commit()
+        return redirect('/test_produccion')
+
+    # GET - Cargar selects
+    cursor.execute("SELECT id_estado_requerimiento, nombre_estado_requerimiento FROM estado_requerimiento")
+    estados = cursor.fetchall()
+
+    cursor.execute("""
+        SELECT ru.id_rol_usuario, u.nombre_usuario || ' ' || u.apellidos_usuario
+        FROM rol_usuario ru
+        JOIN usuario u ON ru.id_usuario = u.id_usuario
+        JOIN rol r ON ru.id_rol = r.id_rol
+        WHERE r.nombre_rol ILIKE '%ejecutor%'
+    """)
+    ejecutores = cursor.fetchall()
+
+    cursor.execute("SELECT id_categoria, nom_categoria FROM categoria")
+    categorias = cursor.fetchall()
+
+    cursor.execute("SELECT id_sistema, nom_sistema FROM sistema")
+    sistemas = cursor.fetchall()
+
+    return render_template('test_produccion.html',
+                           estados=estados,
+                           ejecutores=ejecutores,
+                           categorias=categorias,
+                           sistemas=sistemas)
 
 if __name__ == '__main__':
     app.run(debug=True)
