@@ -7,86 +7,89 @@
 </head>
 <body>
     
-<form method="POST">
-    <h2>Registrar SIRECQ Externo</h2>
+<form method="POST" action="/sirecq_externo">
+    <label for="no_requerimiento">N.º de Requerimiento:</label><br>
+    <input type="text" name="no_requerimiento" required><br><br>
 
-    <label>No. Requerimiento:</label>
-    <input type="text" name="no_requerimiento" required><br>
+    <label for="descripcion">Descripción:</label><br>
+    <textarea name="descripcion" rows="4" required></textarea><br><br>
 
-    <label>Descripción:</label>
-    <input type="text" name="descripcion" required><br>
-
-    <label>Trámite Priorizado Relacionado:</label>
-    <input type="text" name="tramitePR"><br>
-
-    <label>Seguimiento Institucional:</label>
-    <input type="text" name="seguimientoInst"><br>
-
-    <label>Dependencia:</label>
-    <select name="id_dependencia">
-        {% for d in dependencias %}
-        <option value="{{ d[0] }}">{{ d[1] }}</option>
-        {% endfor %}
-    </select><br>
-
-    <label>Sistema a Afectar:</label>
-    <select name="id_sistema">
-        {% for s in sistemas %}
-        <option value="{{ s[0] }}">{{ s[1] }}</option>
-        {% endfor %}
-    </select><br>
-
-    <label>Categoría:</label>
-    <select name="id_categoria">
-        {% for c in categorias %}
-        <option value="{{ c[0] }}">{{ c[1] }}</option>
-        {% endfor %} 
-    </select><br>
-
-    <label>Trámite Catastral:</label>
-    <input type="text" name="tramiteCat"><br>
-
-    <label>Fase:</label>
-    <input type="text" name="fase" value="Requisito" or value="Test/prueba"><br>
-
-    <label>version</label>
-    <input type="text" name="num_version">
-
-
-    <label>Responsable (Analista Catastral):</label>
-    <select name="id_rol_usuario">
-        {% for r in responsables %}
-        <option value="{{ r[0] }}">{{ r[1] }}</option>
-        {% endfor %}
-    </select><br>
-
-    <label>Fecha de Envío por DMC:</label>
-    <input type="date" name="fecha_registro"><br>
-
-    <label>Oficio de Envío a DMI:</label>
-    <input type="text" name="oficioEnvioDmi"><br>
-
-    <label>Fecha de Envío Requerimiento:</label>
-    <input type="date" name="fechaEnvioReq"><br>
-
-    <label>Oficio Despacho Propuesta Técnica:</label>
-    <input type="text" name="ofi_desp_pt"><br>
-
-    <label>Fecha Despacho Propuesta Técnica:</label>
-    <input type="date" name="fech_desp_pt"><br>
-
-    <label>Estado del Requerimiento:</label>
+    <label for="id_estado">Estado del Requerimiento:</label><br>
     <select name="id_estado">
-        {% for e in estados %}
-        <option value="{{ e[0] }}">{{ e[1] }}</option>
+        <option value="">-- Seleccionar --</option>
+        {% for estado in estados %}
+            <option value="{{ estado[0] }}">{{ estado[1] }}</option>
         {% endfor %}
-    </select><br>
+    </select><br><br>
 
-    <label>Observaciones Generales:</label>
-    <textarea name="observacionesGen"></textarea><br>
+    <label for="id_rol_usuario">Responsable:</label><br>
+    <select name="id_rol_usuario">
+        <option value="">-- Seleccionar --</option>
+        {% for responsable in responsables %}
+            <option value="{{ responsable[0] }}">{{ responsable[1] }}</option>
+        {% endfor %}
+    </select><br><br>
 
-    <input type="submit" value="Guardar">
+    <label for="id_sistema">Sistema:</label><br>
+    <select name="id_sistema">
+        <option value="">-- Seleccionar --</option>
+        {% for sistema in sistemas %}
+            <option value="{{ sistema[0] }}">{{ sistema[1] }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <label for="id_categoria">Categoría:</label><br>
+    <select name="id_categoria">
+        <option value="">-- Seleccionar --</option>
+        {% for categoria in categorias %}
+            <option value="{{ categoria[0] }}">{{ categoria[1] }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <label for="fase">Fase:</label><br>
+    <input type="text" name="fase"><br><br>
+
+    <label for="fecha_registro">Fecha de Registro:</label><br>
+    <input type="date" name="fecha_registro"><br><br>
+
+    <label for="tramitePR">Trámite PR:</label><br>
+    <input type="text" name="tramitePR"><br><br>
+
+    <label for="seguimientoInst">Seguimiento Institucional:</label><br>
+    <input type="text" name="seguimientoInst"><br><br>
+
+    <label for="id_dependencia">Dependencia:</label><br>
+    <select name="id_dependencia">
+        <option value="">-- Seleccionar --</option>
+        {% for dependencia in dependencias %}
+            <option value="{{ dependencia[0] }}">{{ dependencia[1] }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <label for="tramiteCat">Trámite Catastral:</label><br>
+    <input type="text" name="tramiteCat"><br><br>
+
+    <label for="oficioEnvioDmi">Oficio Envío DMI:</label><br>
+    <input type="text" name="oficioEnvioDmi"><br><br>
+
+    <label for="fechaEnvioReq">Fecha Envío Requerimiento:</label><br>
+    <input type="date" name="fechaEnvioReq"><br><br>
+
+    <label for="ofi_desp_pt">Oficio Despacho PT:</label><br>
+    <input type="text" name="ofi_desp_pt"><br><br>
+
+    <label for="fech_desp_pt">Fecha Despacho PT:</label><br>
+    <input type="date" name="fech_desp_pt"><br><br>
+
+    <label for="num_version">Número de Versión:</label><br>
+    <input type="text" name="num_version"><br><br>
+
+    <label for="observacionesGen">Observaciones Generales:</label><br>
+    <textarea name="observacionesGen" rows="3"></textarea><br><br>
+
+    <input type="submit" value="Guardar Requerimiento Externo">
 </form>
+
 
 
 </body>
