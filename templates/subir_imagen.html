@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Subir Imagen a Incidente</title>
+</head>
+<body>
+    <h2>Subir Imagen a un Incidente</h2>
+   <form action="/subir_imagen" method="POST" enctype="multipart/form-data">
+    <label for="id_incidente">ID del Incidente:</label>
+    <input type="number" name="id_incidente" required><br><br>
+
+    <label for="imagen">Seleccionar imagen:</label>
+    <input type="file" name="imagen" accept="image/*" required><br><br>
+
+    <input type="submit" value="Subir Imagen">
+</form>
+
+</body>
+</html>
