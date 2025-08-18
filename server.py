@@ -5,11 +5,11 @@ app = Flask(__name__)
 
 # Conexión
 conn = psycopg2.connect(
-    dbname="catastrodb_p2",
-    user="karol",
-    password="Karol2510@Masoquista",
-    host="ep-icy-waterfall-ad8hxp3v-pooler.c-2.us-east-1.aws.neon.tech",
-    port="5432"
+    dbname="",
+    user="",
+    password="",
+    host="",
+    port=""
 )
 cursor = conn.cursor()
 
